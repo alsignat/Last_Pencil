@@ -1,46 +1,62 @@
-game_finished = False
-names = ["John", "Jack"]
+import random
 
-print("How many pencils would you like to use:")
-while True:
+NAMES = ("John", "Jack")
+
+
+def generate_turn(pencils):
+    if pencils == 1:
+        return 1
+    elif pencils % 4 == 1:
+        return random.randint(1, 3)
+    elif pencils % 4 == 0:
+        return 3
+    else:
+        return pencils % 4 - 1
+
+
+def input_pencils():
     pencils = input()
     if not pencils.isnumeric() or int(pencils) < 0:
         print("The number of pencils should be numeric")
-        continue
+        input_pencils()
     elif pencils == "0":
         print("The number of pencils should be positive")
-        continue
+        input_pencils()
     else:
-        pencils = int(pencils)
-        break
+        return int(pencils)
 
-first = input(f"Who will be the first ({names[0]}, {names[1]}):")
-while first not in names:
-    first = input(f"Choose between {names[0]} and {names[1]}")
-if first == names[0]:
-    second = names[1]
+
+print("How many pencils would you like to use:")
+pencils_elapsed = input_pencils()
+first = input(f"Who will be the first ({NAMES[0]}, {NAMES[1]}):")
+while first not in NAMES:
+    first = input(f"Choose between {NAMES[0]} and {NAMES[1]}")
+if first == NAMES[0]:
+    second = NAMES[1]
 else:
-    second = names[0]
+    second = NAMES[0]
 
 player = first
-while not game_finished:
-    print("|" * pencils)
-    while pencils > 0:
-        print(f"{player}'s turn:")
+while True:
+    print("|" * pencils_elapsed)
+    if pencils_elapsed == 0:
+        print(f"{player} won!")
+        break
+    print(f"{player}'s turn:")
+    if player == "John":
         turn = input()
         if not turn.isnumeric() or not 0 < int(turn) < 4:
             print("Possible values: '1', '2' or '3'")
             continue
-        elif int(turn) > pencils:
+        elif int(turn) > pencils_elapsed:
             print("Too many pencils were taken")
             continue
-        pencils -= int(turn)
-        player = second if player is first else first
-        if pencils > 0:
-            print("|" * pencils)
-        else:
-            print(f"{player} won!")
-            game_finished = True
+    else:
+        turn = generate_turn(pencils_elapsed)
+        print(turn)
+    pencils_elapsed -= int(turn)
+    player = second if player is first else first
+
 
 
 
